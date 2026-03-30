@@ -1,12 +1,18 @@
 #include "ai_glasses_jni.h"
 #include "semantic_matcher.h"
-#include <android/log.h>
-#include <string>
-#include <vector>
 
+#ifdef __ANDROID__
+#include <android/log.h>
 #define LOG_TAG "AIGlassesJNI"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
+#else
+#include "desktop_log.h"
+#define LOG_TAG "AIGlassesDesktop"
+#endif
+
+#include <string>
+#include <vector>
 
 using ai_glasses::SemanticMatcher;
 using ai_glasses::SemanticMatchResult;
