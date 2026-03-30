@@ -127,17 +127,15 @@ float SemanticMatcher::calculateCosineSimilarity(const std::string& str1, const 
     float norm1 = 0.0f, norm2 = 0.0f;
     
     for (const auto& pair : freq1) {
-        const auto& token = pair.first;
         const auto& count = pair.second;
         norm1 += static_cast<float>(count * count);
-        auto it = freq2.find(token);
+        auto it = freq2.find(pair.first);
         if (it != freq2.end()) {
             dot_product += static_cast<float>(count * it->second);
         }
     }
     
     for (const auto& pair : freq2) {
-        const auto& token = pair.first;
         const auto& count = pair.second;
         norm2 += static_cast<float>(count * count);
     }

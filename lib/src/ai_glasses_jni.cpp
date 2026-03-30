@@ -9,7 +9,7 @@
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
 using ai_glasses::SemanticMatcher;
-using ai_glasses::MatchResult;
+using ai_glasses::SemanticMatchResult;
 
 JNIEXPORT jlong JNICALL 
 Java_com_aiglasses_SemanticMatcher_nativeCreate(JNIEnv* env, jobject thiz) {
@@ -84,7 +84,7 @@ Java_com_aiglasses_SemanticMatcher_nativeFindBestMatch(JNIEnv* env, jobject thiz
         std::string input_str(input_chars);
         env->ReleaseStringUTFChars(input_text, input_chars);
         
-        MatchResult result = matcher->findBestMatch(input_str);
+        SemanticMatchResult result = matcher->findBestMatch(input_str);
         
         jclass result_class = env->FindClass("com/aiglasses/MatchResult");
         jmethodID constructor = env->GetMethodID(result_class, "<init>", 
@@ -126,7 +126,7 @@ Java_com_aiglasses_SemanticMatcher_nativeFindAllMatches(JNIEnv* env, jobject thi
         std::string input_str(input_chars);
         env->ReleaseStringUTFChars(input_text, input_chars);
         
-        std::vector<MatchResult> results = matcher->findAllMatches(input_str, top_k);
+        std::vector<SemanticMatchResult> results = matcher->findAllMatches(input_str, top_k);
         
         jclass result_class = env->FindClass("com/aiglasses/MatchResult");
         jmethodID constructor = env->GetMethodID(result_class, "<init>", 
