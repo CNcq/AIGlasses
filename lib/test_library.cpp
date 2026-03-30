@@ -58,7 +58,7 @@ void test_embedding_matcher() {
     std::cout << "Testing Embedding Matcher..." << std::endl;
     
     EmbeddingMatcher matcher;
-    matcher.initialize("", "");  // 使用空路径测试
+    matcher.initialize("", "");
     
     // 添加测试数据 - 使用动态缺陷数组
     std::vector<std::string> defect_list = {"箱体材质", "开关故障", "箱体损坏"};
@@ -125,9 +125,9 @@ void test_embedding_matcher() {
     }
 }
 
-// 测试动态缺陷数组
+// 测试动态缺陷数组 - 铜铁铝合金
 void test_dynamic_defects() {
-    std::cout << "Testing Dynamic Defects..." << std::endl;
+    std::cout << "Testing Dynamic Defects (Copper/Iron/Aluminum)..." << std::endl;
     
     EmbeddingMatcher matcher;
     matcher.initialize("", "");
@@ -166,6 +166,69 @@ void test_dynamic_defects() {
     std::cout << "✓ Dynamic Defects test passed!" << std::endl;
 }
 
+// 测试 addEnumItem 重载方法
+void test_add_enum_item_overloads() {
+    std::cout << "Testing addEnumItem Overloads..." << std::endl;
+    
+    EmbeddingMatcher matcher;
+    matcher.initialize("", "");
+    
+    // 测试 addEnumItem(const EnumItem& item)
+    EnumItem item1;
+    item1.id = "TEST_001";
+    item1.text = "测试缺陷1";
+    item1.keywords = {"关键词1", "关键词2"};
+    item1.threshold = 0.5f;
+    item1.enabled = true;
+    item1.is_precomputed = false;
+    matcher.addEnumItem(item1);
+    
+    // 测试 addEnumItem(const std::string& id, const std::string& text, const std::vector<std::string>& keywords)
+    matcher.addEnumItem("TEST_002", "测试缺陷2", {"关键词3", "关键词4"});
+    
+    // 测试 addEnumItem(const std::string& id, const std::string& text, const std::string& description, const std::vector<std::string>& keywords, float threshold)
+    matcher.addEnumItem("TEST_003", "测试缺陷3", "这是描述", {"关键词5"}, 0.6f);
+    
+    std::cout << "Total enum items: " << matcher.getEnumItemCount() << std::endl;
+    assert(matcher.getEnumItemCount() == 3);
+    
+    std::cout << "✓ addEnumItem Overloads test passed!" << std::endl;
+}
+
+// 测试阈值设置
+void test_threshold_setting() {
+    std::cout << "Testing Threshold Setting..." << std::endl;
+    
+    EmbeddingMatcher matcher;
+    matcher.initialize("", "");
+    
+    std::vector<std::string> defect_list = {"缺陷A", "缺陷B"};
+    matcher.addDefectsFromList(defect_list);
+    
+    // 设置阈值
+    matcher.setSimilarityThreshold(0.7f);
+    assert(matcher.getSimilarityThreshold() == 0.7f);
+    
+    std::cout << "Similarity threshold: " << matcher.getSimilarityThreshold() << std::endl;
+    std::cout << "✓ Threshold Setting test passed!" << std::endl;
+}
+
+// 测试 computeEmbedding
+void test_compute_embedding() {
+    std::cout << "Testing computeEmbedding..." << std::endl;
+    
+    EmbeddingMatcher matcher;
+    matcher.initialize("", "");
+    
+    // 计算文本嵌入
+    EmbeddingVector embedding = matcher.computeEmbedding("测试文本");
+    
+    std::cout << "Embedding dimension: " << embedding.size() << std::endl;
+    assert(embedding.size() == EMBEDDING_DIM);
+    
+    std::cout << "✓ computeEmbedding test passed!" << std::endl;
+}
+
 int main() {
     std::cout << "========================================" << std::endl;
     std::cout << "AI Glasses C++ Library Test Suite" << std::endl;
@@ -177,6 +240,9 @@ int main() {
         test_jieba_segmenter();
         test_embedding_matcher();
         test_dynamic_defects();
+        test_add_enum_item_overloads();
+        test_threshold_setting();
+        test_compute_embedding();
         
         std::cout << std::endl;
         std::cout << "========================================" << std::endl;
