@@ -85,47 +85,56 @@ compile_tests() {
     
     if [ ! -f "test_library.cpp" ]; then
         echo_error "找不到 test_library.cpp"
-        echo_info "请先创建测试文件（参考 TESTING_GUIDE.md）"
+        echo_info "请先创建测试文件"
         exit 1
     fi
     
-    # 检查库文件是否存在
-    if [ ! -f "./build_android/x86_64/lib/libai_glasses.so" ]; then
-        echo_error "找不到库文件"
-        echo_info "请先运行构建：./build_android.sh"
-        exit 1
-    fi
-    
-    # 检查编译器
-    if ! command -v g++ &> /dev/null; then
-        echo_error "g++ 未安装"
-        echo_info "安装：sudo apt install g++"
-        exit 1
-    fi
-    
-    echo_info "编译命令：g++ -std=c++14 -I./include -L./build_android/x86_64/lib -o test_library test_library.cpp -lai_glasses -Wl,-rpath,./build_android/x86_64/lib"
-    
-    g++ -std=c++14 \
-        -I./include \
-        -L./build_android/x86_64/lib \
-        -o test_library \
-        test_library.cpp \
-        -lai_glasses \
-        -Wl,-rpath,./build_android/x86_64/lib \
-        2>&1
-    
-    if [ $? -eq 0 ]; then
-        echo_success "测试程序编译成功"
+    # 检查是否有桌面版本
+    if [ -f "./build_desktop/lib/libai_glasses.a" ] || [ -f "./build_desktop/lib/libai_glasses.so" ]; then
+        echo_info "发现桌面版本库文件"
+        
+        # 检查编译器
+        if ! command -v g++ &> /dev/null; then
+            echo_error "g++ 未安装"
+            echo_info "安装：sudo apt install g++"
+            exit 1
+        fi
+        
+        # 尝试使用静态库
+        if [ -f "./build_desktop/lib/libai_glasses.a" ]; then
+            echo_info "使用静态库进行编译..."
+            g++ -std=c++14 \
+                -I./include \
+                -o test_library \
+                test_library.cpp \
+                ./build_desktop/lib/libai_glasses.a \
+                -lpthread \
+                2>&1
+        else
+            echo_info "使用共享库进行编译..."
+            g++ -std=c++14 \
+                -I./include \
+                -L./build_desktop/lib \
+                -o test_library \
+                test_library.cpp \
+                -lai_glasses \
+                -Wl,-rpath,./build_desktop/lib \
+                2>&1
+        fi
+        
+        if [ $? -eq 0 ]; then
+            echo_success "测试程序编译成功"
+        else
+            echo_error "测试程序编译失败"
+            exit 1
+        fi
     else
-        echo_error "测试程序编译失败"
-        echo_info "可能的原因："
-        echo_info "  1. 库文件不完整或损坏 - 请重新运行 ./build_android.sh"
-        echo_info "  2. 缺少符号定义 - 检查是否所有源文件都已添加到 CMakeLists.txt"
-        echo_info "  3. 头文件不匹配 - 清理并重新构建"
+        echo_error "找不到桌面版本库文件"
+        echo_info "请先构建桌面版本："
+        echo_info "  ./build_desktop.sh"
         echo_info ""
-        echo_info "建议执行："
-        echo_info "  rm -rf build_android"
-        echo_info "  ./build_android.sh"
+        echo_info "或者只验证 Android 库文件："
+        echo_info "  ./run_tests.sh verify"
         exit 1
     fi
 }
@@ -156,6 +165,52 @@ run_tests() {
     fi
 }
 
+# 显示测试摘要
+show_summary() {
+    echo_step "测试摘要..."
+    echo ""
+    
+    # 检查桌面版本
+    if [ -f "./build_desktop/lib/libai_glasses.so" ]; then
+        echo_info "桌面版本库文件："
+        echo "  路径：build_desktop/lib/libai_glasses.so"
+        echo "  大小：$(du -h build_desktop/lib/libai_glasses.so | cut -f1)"
+        echo "  符号数：$(nm -D build_desktop/lib/libai_glasses.so | grep " T " | wc -l)"
+        echo ""
+    fi
+    
+    # 检查 Android 版本
+    if [ -f "./build_android/x86_64/lib/libai_glasses.so" ]; then
+        echo_info "Android 版本库文件："
+        echo "  路径：build_android/x86_64/lib/libai_glasses.so"
+        echo "  大小：$(du -h build_android/x86_64/lib/libai_glasses.so | cut -f1)"
+        echo "  符号数：$(nm -D build_android/x86_64/lib/libai_glasses.so | grep " T " | wc -l)"
+        echo ""
+    fi
+    
+    # 检查测试程序
+    if [ -f "./test_library" ]; then
+        echo_info "测试程序：已编译"
+    else
+        echo_info "测试程序：未编译"
+    fi
+    
+    echo ""
+    echo_info "测试状态："
+    if [ -f "./build_desktop/lib/libai_glasses.so" ] && [ -f "./test_library" ]; then
+        echo_success "桌面测试环境就绪"
+        echo_info "运行：$0 run"
+    elif [ -f "./build_android/x86_64/lib/libai_glasses.so" ]; then
+        echo_success "Android 库已就绪"
+        echo_info "验证：$0 verify"
+        echo_info "或使用：./verify_library.sh"
+    else
+        echo_error "请先构建库文件"
+        echo_info "桌面版本：./build_desktop.sh"
+        echo_info "Android 版本：./build_android.sh"
+    fi
+}
+
 # 清理
 clean() {
     echo_step "清理测试文件..."
@@ -167,23 +222,27 @@ clean() {
 show_help() {
     echo "AI Glasses C++ 库测试脚本"
     echo ""
-    echo "用法：$0 {compile|run|verify|clean|all|help}"
+    echo "用法：$0 {compile|run|verify|clean|all|summary|help}"
     echo ""
     echo "命令说明："
-    echo "  compile - 编译测试程序"
-    echo "  run     - 运行测试"
+    echo "  compile - 编译测试程序（需要桌面版本）"
+    echo "  run     - 运行测试（需要桌面版本）"
     echo "  verify  - 验证 .so 文件"
     echo "  clean   - 清理测试文件"
     echo "  all     - 运行所有测试（默认）"
+    echo "  summary - 显示测试摘要"
     echo "  help    - 显示帮助信息"
     echo ""
     echo "示例："
     echo "  $0 verify              # 只验证 .so 文件"
-    echo "  $0 compile             # 编译测试程序"
-    echo "  $0 run                 # 运行测试"
+    echo "  $0 summary             # 显示测试摘要"
+    echo "  $0 compile             # 编译测试程序（需要桌面版本）"
+    echo "  $0 run                 # 运行测试（需要桌面版本）"
     echo "  $0 all                 # 运行所有测试"
     echo ""
-    echo "注意：运行测试前需要先构建库（./build_android.sh）"
+    echo "构建说明："
+    echo "  桌面版本：./build_desktop.sh  # 用于 Linux 测试"
+    echo "  Android 版本：./build_android.sh  # 用于 Android 部署"
 }
 
 # 主函数
@@ -195,16 +254,17 @@ main() {
     
     case "${1:-all}" in
         compile)
-            check_build
             compile_tests
             ;;
         run)
-            check_build
             run_tests
             ;;
         verify)
             check_build
             test_shared_library
+            ;;
+        summary)
+            show_summary
             ;;
         clean)
             clean
