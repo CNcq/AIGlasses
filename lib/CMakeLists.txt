@@ -28,7 +28,11 @@ set(LIB_SOURCES
 )
 
 # 如果需要 JNI 支持
-if(BUILD_ANDROID_JNI)
+if(BUILD_ANDROID_JNI AND NOT ANDROID)
+    message(WARNING "BUILD_ANDROID_JNI is ON but ANDROID is OFF, ignoring")
+endif()
+
+if(BUILD_ANDROID_JNI AND ANDROID)
     list(APPEND LIB_SOURCES
         src/embedding_matcher_jni.cpp
         src/ai_glasses_jni.cpp

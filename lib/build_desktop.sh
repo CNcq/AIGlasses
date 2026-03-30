@@ -80,9 +80,10 @@ configure_cmake() {
     cmake .. \
         -DCMAKE_BUILD_TYPE=Release \
         -DBUILD_ANDROID_JNI=OFF \
-        -DBUILD_SHARED_LIBS=ON \
+        -DBUILD_SHARED_LIBS=OFF \
         -DBUILD_TESTS=OFF \
-        -DCMAKE_INSTALL_PREFIX=./install
+        -DCMAKE_INSTALL_PREFIX=./install \
+        -DANDROID=OFF
     
     echo_success "CMake 配置完成"
 }
