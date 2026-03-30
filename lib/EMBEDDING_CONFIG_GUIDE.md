@@ -2,102 +2,146 @@
 
 ## 概述
 
-词向量配置系统允许你从 JSON 配置文件加载词语，系统会自动为每个词生成随机向量，使词向量管理更加灵活和可配置。
-
-## 文件结构
-
-```
-resources/
-├── embedding_config.json      # 词向量配置文件（词语列表）
-└── config/
-    └── defects_example.json   # 缺陷枚举配置文件（缺陷定义）
-```
-
-## 配置文件说明
-
-### 1. embedding_config.json - 词向量配置文件
-
-**作用**: 定义所有需要计算向量的词语列表
-
-**格式**:
-```json
-{
-  "embedding_dim": 128,
-  "words": [
-    "箱体材质",
-    "不锈钢",
-    "塑料",
-    "隔离开关",
-    "变形破损",
-    "老化"
-  ]
-}
-```
-
-**字段说明**:
-- `embedding_dim`: 向量维度（默认 128）
-- `words`: 词语列表（不需要提供向量，系统自动生成）
-
-**注意事项**:
-- ✅ 只包含有意义的完整词语（2个字或以上）
-- ✅ 避免单字词（如"锈"、"蚀"、"破"）
-- ✅ 避免停用词（如"或"、"不"、"有"、"无"）
-- ✅ 避免重复词语
-- ✅ 保持词语的语义完整性
-
-### 2. defects_example.json - 缺陷枚举配置文件
-
-**作用**: 定义具体的缺陷类型及其关键词
-
-**格式**:
-```json
-{
-  "version": "1.0",
-  "description": "缺陷枚举配置",
-  "metadata": {
-    "embedding_dim": 128,
-    "default_threshold": 0.5
-  },
-  "defects": [
-    {
-      "id": "MET_BOX_001",
-      "name": "箱体材质",
-      "description": "计量箱箱体材质类型",
-      "keywords": [
-        "箱体材质",
-        "不锈钢",
-        "塑料",
-        "铁"
-      ],
-      "categories": ["箱体", "材质"],
-      "threshold": 0.6,
-      "enabled": true
-    }
-  ]
-}
-```
-
-**字段说明**:
-
-**根字段**:
-- `version`: 配置文件版本
-- `description`: 配置描述
-- `metadata`: 元数据
-  - `embedding_dim`: 向量维度
-  - `default_threshold`: 默认匹配阈值
-
-**defects 数组**:
-- `id`: 缺陷唯一标识（如 "MET_BOX_001"）
-- `name`: 缺陷名称
-- `description`: 缺陷描述
-- `keywords`: 关键词列表（与 embedding_config.json 中的词对应）
-- `categories`: 分类标签
-- `threshold`: 匹配阈值（0.0-1.0，越高要求越严格）
-- `enabled`: 是否启用
+词向量配置系统采用动态导入方式，用户可以在代码中直接输入缺陷数组，系统会自动为每个词生成随机向量，使词向量管理更加灵活和可配置。
 
 ## 使用流程
 
-### 完整配置流程
+### 动态缺陷数组配置
+
+```cpp
+#include "embedding_matcher.h"
+
+using namespace ai_glasses;
+
+int main() {
+    EmbeddingMatcher matcher;
+    matcher.initialize("", "");
+    
+    // 用户输入的缺陷数组
+    std::vector<std::string> defect_list = {"铜质", "铁质", "铝合金质"};
+    
+    // 动态添加缺陷
+    matcher.addDefectsFromList(defect_list);
+    
+    // 匹配文本
+    MatchResult result = matcher.findBestMatch("这个变电箱材质为铜");
+    
+    std::cout << "Matched: " << result.matched_text << std::endl;
+    std::cout << "Similarity: " << result.similarity << std::endl;
+    
+    return 0;
+}
+```
+
+## 核心 API
+
+### addDefectsFromList
+
+动态添加缺陷数组。
+
+```cpp
+void addDefectsFromList(const std::vector<std::string>& defect_list);
+```
+
+**参数**:
+- `defect_list`: 缺陷名称数组
+
+**示例**:
+```cpp
+std::vector<std::string> defects = {"铜质", "铁质", "铝合金质"};
+matcher.addDefectsFromList(defects);
+```
+
+## 故障排查
+
+### 问题 1: 缺陷未匹配
+
+```
+Input: 这个变电箱材质为铜
+Matched: (empty)
+Similarity: 0.0
+```
+
+**解决方案**:
+- 检查输入文本是否包含缺陷关键词
+- 调整匹配阈值
+- 确保缺陷数组已正确添加
+
+### 问题 2: 匹配效果不佳
+
+```
+匹配结果不准确
+```
+
+**解决方案**:
+- 检查缺陷关键词是否覆盖全面
+- 调整 threshold 阈值
+- 增加同义词和近义词
+
+## 总结
+
+词向量配置系统提供了灵活的词向量管理方式，支持动态导入缺陷数组，系统自动为每个词生成随机向量，使词向量的维护和更新更加方便。
+
+**核心要点**:
+1. ✅ 动态添加缺陷: 使用 `addDefectsFromList` 方法
+2. ✅ 缺陷名称: 完整、有意义
+3. ✅ 阈值设置: 合理范围 0.5-0.7
+4. ✅ 测试验证: 运行测试验证效果
+
+## 核心 API
+
+### addDefectsFromList
+
+动态添加缺陷数组。
+
+```cpp
+void addDefectsFromList(const std::vector<std::string>& defect_list);
+```
+
+**参数**:
+- `defect_list`: 缺陷名称数组
+
+**示例**:
+```cpp
+std::vector<std::string> defects = {"铜质", "铁质", "铝合金质"};
+matcher.addDefectsFromList(defects);
+```
+
+## 故障排查
+
+### 问题 1: 缺陷未匹配
+
+```
+Input: 这个变电箱材质为铜
+Matched: (empty)
+Similarity: 0.0
+```
+
+**解决方案**:
+- 检查输入文本是否包含缺陷关键词
+- 调整匹配阈值
+- 确保缺陷数组已正确添加
+
+### 问题 2: 匹配效果不佳
+
+```
+匹配结果不准确
+```
+
+**解决方案**:
+- 检查缺陷关键词是否覆盖全面
+- 调整 threshold 阈值
+- 增加同义词和近义词
+
+## 总结
+
+词向量配置系统提供了灵活的词向量管理方式，支持动态导入缺陷数组，系统自动为每个词生成随机向量，使词向量的维护和更新更加方便。
+
+**核心要点**:
+1. ✅ 动态添加缺陷: 使用 `addDefectsFromList` 方法
+2. ✅ 缺陷名称: 完整、有意义
+3. ✅ 阈值设置: 合理范围 0.5-0.7
+4. ✅ 测试验证: 运行测试验证效果
 
 #### 步骤 1: 准备词向量配置
 
@@ -381,88 +425,46 @@ with open("embedding_config.json", "w") as f:
 
 ## 性能优化
 
-### 使用预计算缓存
+### 动态添加缺陷
 
 ```cpp
-// 预计算并保存枚举项的向量
-matcher.precomputeAndSaveEnumVectors("cache/embedding_cache.bin");
-
-// 加载预计算的向量
-matcher.loadPrecomputedEnumVectors("cache/embedding_cache.bin");
-```
-
-### 批量加载
-
-```cpp
-// 一次性加载所有词语
-matcher.loadEmbeddingConfig("resources/embedding_config.json");
-
-// 然后添加所有枚举项
-matcher.addEnumItem("wall_peel", "墙皮脱落", {"墙壁", "脱落"});
-matcher.addEnumItem("crack", "裂缝", {"裂缝", "裂痕"});
+// 一次性添加所有缺陷
+std::vector<std::string> defects = {"铜质", "铁质", "铝合金质"};
+matcher.addDefectsFromList(defects);
 ```
 
 ## 故障排查
 
-### 问题 1: 找不到配置文件
+### 问题 1: 缺陷未匹配
 
 ```
-Error: Failed to open config file
+Input: 这个变电箱材质为铜
+Matched: (empty)
+Similarity: 0.0
 ```
 
-**解决方案**: 检查文件路径是否正确
+**解决方案**:
+- 检查输入文本是否包含缺陷关键词
+- 调整匹配阈值
+- 确保缺陷数组已正确添加
 
-### 问题 2: JSON 解析失败
-
-```
-Error: Failed to parse JSON
-```
-
-**解决方案**: 
-- 检查 JSON 格式是否正确
-- 使用在线 JSON 校验工具验证
-- 确保文件编码为 UTF-8
-
-### 问题 3: 向量维度不匹配
-
-```
-Error: Vector dimension mismatch
-```
-
-**解决方案**: 确保配置文件中的 `embedding_dim` 与实际向量维度一致
-
-### 问题 4: 匹配效果不佳
+### 问题 2: 匹配效果不佳
 
 ```
 匹配结果不准确
 ```
 
 **解决方案**:
-- 检查关键词是否覆盖全面
+- 检查缺陷关键词是否覆盖全面
 - 调整 threshold 阈值
 - 增加同义词和近义词
-- 检查输入文本是否正确
-
-### 问题 5: 配置文件过大
-
-```
-配置文件包含大量无意义的词
-```
-
-**解决方案**:
-- 移除单字词
-- 移除停用词
-- 合并重复的词
-- 只保留有实际意义的词语
 
 ## 总结
 
-词向量配置系统提供了灵活的词向量管理方式，支持从 JSON 配置文件加载词语，系统自动为每个词生成随机向量，使词向量的维护和更新更加方便。
+词向量配置系统提供了灵活的词向量管理方式，支持动态导入缺陷数组，系统自动为每个词生成随机向量，使词向量的维护和更新更加方便。
 
 **核心要点**:
-1. ✅ embedding_config.json: 只包含需要计算向量的词语
-2. ✅ defects_example.json: 定义缺陷类型及其关键词
-3. ✅ 词语选择: 完整、有意义、避免重复
-4. ✅ 阈值设置: 合理范围 0.5-0.7
-5. ✅ 版本管理: 纳入 Git 等版本控制系统
-6. ✅ 测试验证: 修改后运行测试验证效果
+1. ✅ 动态添加缺陷: 使用 `addDefectsFromList` 方法
+2. ✅ 缺陷名称: 完整、有意义
+3. ✅ 阈值设置: 合理范围 0.5-0.7
+4. ✅ 测试验证: 运行测试验证效果

@@ -4,8 +4,6 @@
 #include "json_parser.h"
 #include <algorithm>
 #include <cmath>
-#include <fstream>
-#include <sstream>
 #include <numeric>
 
 namespace ai_glasses {
@@ -15,7 +13,6 @@ struct EmbeddingMatcher::Impl {
     std::unique_ptr<EmbeddingModel> embedding_model;
     std::vector<EnumItem> enum_items;
     std::unordered_map<std::string, size_t> enum_item_map;
-    std::unordered_map<std::string, std::vector<std::string>> category_map;
     float similarity_threshold = 0.5f;
     bool initialized = false;
 };
@@ -46,75 +43,6 @@ bool EmbeddingMatcher::initialize(const std::string& jieba_dict_path,
     
     impl_->initialized = success;
     return success;
-}
-
-bool EmbeddingMatcher::initializeFromConfig(const std::string& config_path) {
-    return loadDefectConfig(config_path);
-}
-
-bool EmbeddingMatcher::loadDefectConfig(const std::string& config_path) {
-    std::ifstream file(config_path);
-    if (!file.is_open()) {
-        return false;
-    }
-    
-    std::stringstream buffer;
-    buffer << file.rdbuf();
-    std::string content = buffer.str();
-    
-    return loadDefectConfigFromString(content);
-}
-
-bool EmbeddingMatcher::loadDefectConfigFromString(const std::string& json_string) {
-    try {
-        JsonValue root = JsonParser::parse(json_string);
-        
-        if (!root.isObject() || !root.has("defects") || !root["defects"].isArray()) {
-            return false;
-        }
-        
-        const auto& defects = root["defects"].asArray();
-        
-        for (size_t i = 0; i < defects.size(); ++i) {
-            if (!defects[i].isObject()) continue;
-            
-            const auto& defect = defects[i];
-            
-            EnumItem item;
-            item.id = defect.has("id") ? defect["id"].asString() : "";
-            item.text = defect.has("name") ? defect["name"].asString() : "";
-            item.description = defect.has("description") ? defect["description"].asString() : "";
-            item.threshold = defect.has("threshold") ? static_cast<float>(defect["threshold"].asNumber()) : 0.5f;
-            item.enabled = defect.has("enabled") ? defect["enabled"].asBool() : true;
-            item.is_precomputed = false;
-            item.embedding.fill(0.0f);
-            
-            if (defect.has("keywords") && defect["keywords"].isArray()) {
-                const auto& keywords = defect["keywords"].asArray();
-                for (size_t j = 0; j < keywords.size(); ++j) {
-                    if (keywords[j].isString()) {
-                        item.keywords.push_back(keywords[j].asString());
-                    }
-                }
-            }
-            
-            if (defect.has("categories") && defect["categories"].isArray()) {
-                const auto& categories = defect["categories"].asArray();
-                for (size_t j = 0; j < categories.size(); ++j) {
-                    if (categories[j].isString()) {
-                        std::string category = categories[j].asString();
-                        impl_->category_map[category].push_back(item.id);
-                    }
-                }
-            }
-            
-            addEnumItem(item);
-        }
-        
-        return true;
-    } catch (...) {
-        return false;
-    }
 }
 
 void EmbeddingMatcher::addEnumItem(const EnumItem& item) {
@@ -159,6 +87,16 @@ void EmbeddingMatcher::addEnumItem(const std::string& id, const std::string& tex
     addEnumItem(item);
 }
 
+void EmbeddingMatcher::addDefectsFromList(const std::vector<std::string>& defect_list) {
+    for (size_t i = 0; i < defect_list.size(); ++i) {
+        std::string id = "defect_" + std::to_string(i);
+        std::string text = defect_list[i];
+        std::vector<std::string> keywords = {text};
+        
+        addEnumItem(id, text, keywords);
+    }
+}
+
 MatchResult EmbeddingMatcher::findBestMatch(const std::string& input_text) {
     MatchResult result;
     result.input_text = input_text;
@@ -191,146 +129,9 @@ MatchResult EmbeddingMatcher::findBestMatch(const std::string& input_text) {
     return result;
 }
 
-std::vector<MatchResult> EmbeddingMatcher::findAllMatches(const std::string& input_text, int top_k) {
-    std::vector<MatchResult> results;
-    
-    if (impl_->enum_items.empty()) {
-        return results;
-    }
-    
-    auto input_embedding = computeEmbedding(input_text);
-    
-    for (size_t i = 0; i < impl_->enum_items.size(); ++i) {
-        const auto& enum_item = impl_->enum_items[i];
-        if (!enum_item.enabled || !enum_item.is_precomputed) {
-            continue;
-        }
-        
-        float sim = cosineSimilarity(input_embedding, enum_item.embedding);
-        
-        // 只添加有实际匹配的结果
-        if (sim > 0.0f) {
-            MatchResult result;
-            result.input_text = input_text;
-            result.matched_id = enum_item.id;
-            result.matched_text = enum_item.text;
-            result.similarity = sim;
-            result.is_match = sim >= enum_item.threshold;
-            results.push_back(result);
-        }
-    }
-    
-    std::sort(results.begin(), results.end(), [](const MatchResult& a, const MatchResult& b) {
-        return a.similarity > b.similarity;
-    });
-    
-    for (size_t i = 0; i < results.size(); ++i) {
-        results[i].rank = i + 1;
-    }
-    
-    if (results.size() > static_cast<size_t>(top_k)) {
-        results.resize(top_k);
-    }
-    
-    return results;
-}
-
-std::vector<MatchResult> EmbeddingMatcher::findByCategory(const std::string& category,
-                                                           const std::string& input_text) {
-    std::vector<MatchResult> results;
-    
-    auto it = impl_->category_map.find(category);
-    if (it == impl_->category_map.end()) {
-        return results;
-    }
-    
-    const auto& item_ids = it->second;
-    auto input_embedding = computeEmbedding(input_text);
-    
-    for (const auto& item_id : item_ids) {
-        auto map_it = impl_->enum_item_map.find(item_id);
-        if (map_it == impl_->enum_item_map.end()) {
-            continue;
-        }
-        
-        const auto& enum_item = impl_->enum_items[map_it->second];
-        if (!enum_item.enabled || !enum_item.is_precomputed) {
-            continue;
-        }
-        
-        float sim = cosineSimilarity(input_embedding, enum_item.embedding);
-        
-        MatchResult result;
-        result.input_text = input_text;
-        result.matched_id = enum_item.id;
-        result.matched_text = enum_item.text;
-        result.similarity = sim;
-        result.is_match = sim >= enum_item.threshold;
-        results.push_back(result);
-    }
-    
-    std::sort(results.begin(), results.end(), [](const MatchResult& a, const MatchResult& b) {
-        return a.similarity > b.similarity;
-    });
-    
-    for (size_t i = 0; i < results.size(); ++i) {
-        results[i].rank = i + 1;
-    }
-    
-    return results;
-}
-
 EmbeddingVector EmbeddingMatcher::computeEmbedding(const std::string& text) {
     auto tokens = segmentText(text);
     return computeTextEmbedding(tokens);
-}
-
-bool EmbeddingMatcher::loadPrecomputedEmbeddings(const std::string& file_path) {
-    std::ifstream file(file_path, std::ios::binary);
-    if (!file.is_open()) {
-        return false;
-    }
-    
-    size_t count;
-    file.read(reinterpret_cast<char*>(&count), sizeof(size_t));
-    
-    for (size_t i = 0; i < count; ++i) {
-        size_t id_len;
-        file.read(reinterpret_cast<char*>(&id_len), sizeof(size_t));
-        
-        std::string id(id_len, '\0');
-        file.read(&id[0], id_len);
-        
-        EmbeddingVector embedding;
-        file.read(reinterpret_cast<char*>(embedding.data()), EMBEDDING_DIM * sizeof(float));
-        
-        auto it = impl_->enum_item_map.find(id);
-        if (it != impl_->enum_item_map.end()) {
-            impl_->enum_items[it->second].embedding = embedding;
-            impl_->enum_items[it->second].is_precomputed = true;
-        }
-    }
-    
-    return true;
-}
-
-bool EmbeddingMatcher::savePrecomputedEmbeddings(const std::string& file_path) {
-    std::ofstream file(file_path, std::ios::binary);
-    if (!file.is_open()) {
-        return false;
-    }
-    
-    size_t count = impl_->enum_items.size();
-    file.write(reinterpret_cast<const char*>(&count), sizeof(size_t));
-    
-    for (const auto& item : impl_->enum_items) {
-        size_t id_len = item.id.size();
-        file.write(reinterpret_cast<const char*>(&id_len), sizeof(size_t));
-        file.write(item.id.c_str(), id_len);
-        file.write(reinterpret_cast<const char*>(item.embedding.data()), EMBEDDING_DIM * sizeof(float));
-    }
-    
-    return true;
 }
 
 void EmbeddingMatcher::setSimilarityThreshold(float threshold) {
@@ -343,41 +144,6 @@ float EmbeddingMatcher::getSimilarityThreshold() const {
 
 size_t EmbeddingMatcher::getEnumItemCount() const {
     return impl_->enum_items.size();
-}
-
-size_t EmbeddingMatcher::getEnabledEnumItemCount() const {
-    size_t count = 0;
-    for (const auto& item : impl_->enum_items) {
-        if (item.enabled) {
-            count++;
-        }
-    }
-    return count;
-}
-
-void EmbeddingMatcher::enableEnumItem(const std::string& id) {
-    auto it = impl_->enum_item_map.find(id);
-    if (it != impl_->enum_item_map.end()) {
-        impl_->enum_items[it->second].enabled = true;
-        if (!impl_->enum_items[it->second].is_precomputed) {
-            computeEnumItemEmbedding(impl_->enum_items[it->second]);
-        }
-    }
-}
-
-void EmbeddingMatcher::disableEnumItem(const std::string& id) {
-    auto it = impl_->enum_item_map.find(id);
-    if (it != impl_->enum_item_map.end()) {
-        impl_->enum_items[it->second].enabled = false;
-    }
-}
-
-bool EmbeddingMatcher::isEnumItemEnabled(const std::string& id) const {
-    auto it = impl_->enum_item_map.find(id);
-    if (it != impl_->enum_item_map.end()) {
-        return impl_->enum_items[it->second].enabled;
-    }
-    return false;
 }
 
 float EmbeddingMatcher::cosineSimilarity(const EmbeddingVector& v1, const EmbeddingVector& v2) {
@@ -445,113 +211,6 @@ void EmbeddingMatcher::computeEnumItemEmbedding(EnumItem& item) {
     
     item.embedding = computeTextEmbedding(all_tokens);
     item.is_precomputed = true;
-}
-
-bool EmbeddingMatcher::precomputeAndSaveEnumVectors(const std::string& cache_path) {
-    std::ofstream file(cache_path, std::ios::binary);
-    if (!file.is_open()) {
-        return false;
-    }
-    
-    size_t count = impl_->enum_items.size();
-    file.write(reinterpret_cast<const char*>(&count), sizeof(size_t));
-    
-    for (const auto& item : impl_->enum_items) {
-        size_t id_len = item.id.size();
-        file.write(reinterpret_cast<const char*>(&id_len), sizeof(size_t));
-        file.write(item.id.c_str(), id_len);
-        
-        size_t text_len = item.text.size();
-        file.write(reinterpret_cast<const char*>(&text_len), sizeof(size_t));
-        file.write(item.text.c_str(), text_len);
-        
-        EmbeddingVector embedding = item.embedding;
-        if (!item.is_precomputed) {
-            embedding = computeTextEmbedding(segmentText(item.text));
-            for (const auto& kw : item.keywords) {
-                auto kw_emb = computeTextEmbedding(segmentText(kw));
-                for (size_t i = 0; i < EMBEDDING_DIM; ++i) {
-                    embedding[i] += kw_emb[i];
-                }
-            }
-            float norm = 0.0f;
-            for (size_t i = 0; i < EMBEDDING_DIM; ++i) {
-                norm += embedding[i] * embedding[i];
-            }
-            if (norm > 0) {
-                norm = std::sqrt(norm);
-                for (size_t i = 0; i < EMBEDDING_DIM; ++i) {
-                    embedding[i] /= norm;
-                }
-            }
-        }
-        
-        file.write(reinterpret_cast<const char*>(embedding.data()), EMBEDDING_DIM * sizeof(float));
-        
-        bool enabled = item.enabled;
-        file.write(reinterpret_cast<const char*>(&enabled), sizeof(bool));
-        
-        float threshold = item.threshold;
-        file.write(reinterpret_cast<const char*>(&threshold), sizeof(float));
-    }
-    
-    return true;
-}
-
-bool EmbeddingMatcher::loadPrecomputedEnumVectors(const std::string& cache_path) {
-    std::ifstream file(cache_path, std::ios::binary);
-    if (!file.is_open()) {
-        return false;
-    }
-    
-    size_t count;
-    file.read(reinterpret_cast<char*>(&count), sizeof(size_t));
-    
-    for (size_t i = 0; i < count; ++i) {
-        size_t id_len;
-        file.read(reinterpret_cast<char*>(&id_len), sizeof(size_t));
-        
-        std::string id(id_len, '\0');
-        file.read(&id[0], id_len);
-        
-        size_t text_len;
-        file.read(reinterpret_cast<char*>(&text_len), sizeof(size_t));
-        
-        std::string text(text_len, '\0');
-        file.read(&text[0], text_len);
-        
-        EmbeddingVector embedding;
-        file.read(reinterpret_cast<char*>(embedding.data()), EMBEDDING_DIM * sizeof(float));
-        
-        bool enabled;
-        file.read(reinterpret_cast<char*>(&enabled), sizeof(bool));
-        
-        float threshold;
-        file.read(reinterpret_cast<char*>(&threshold), sizeof(float));
-        
-        auto it = impl_->enum_item_map.find(id);
-        if (it != impl_->enum_item_map.end()) {
-            impl_->enum_items[it->second].embedding = embedding;
-            impl_->enum_items[it->second].is_precomputed = true;
-            impl_->enum_items[it->second].enabled = enabled;
-            impl_->enum_items[it->second].threshold = threshold;
-        } else {
-            EnumItem item;
-            item.id = id;
-            item.text = text;
-            item.embedding = embedding;
-            item.enabled = enabled;
-            item.threshold = threshold;
-            item.is_precomputed = true;
-            item.description = "";
-            
-            size_t index = impl_->enum_items.size();
-            impl_->enum_items.push_back(item);
-            impl_->enum_item_map[id] = index;
-        }
-    }
-    
-    return true;
 }
 
 bool EmbeddingMatcher::addWordVector(const std::string& word, const std::vector<float>& vector) {

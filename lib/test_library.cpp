@@ -1,8 +1,6 @@
 #include "embedding_matcher.h"
 #include "jieba_segmenter.h"
 #include "json_parser.h"
-#include "semantic_matcher.h"
-#include "defect_config_loader.h"
 #include <iostream>
 #include <cassert>
 
@@ -55,42 +53,22 @@ void test_jieba_segmenter() {
     std::cout << "✓ Jieba Segmenter test passed!" << std::endl;
 }
 
-// 测试 EmbeddingMatcher - 使用计量箱缺陷配置
+// 测试 EmbeddingMatcher - 使用动态缺陷数组
 void test_embedding_matcher() {
     std::cout << "Testing Embedding Matcher..." << std::endl;
     
     EmbeddingMatcher matcher;
     matcher.initialize("", "");  // 使用空路径测试
     
-    // 添加测试数据 - 使用计量箱缺陷配置
-    std::vector<std::string> keywords1 = {"箱体材质", "不锈钢", "塑料", "铁"};
-    matcher.addEnumItem("MET_BOX_001", "箱体材质", keywords1);
+    // 添加测试数据 - 使用动态缺陷数组
+    std::vector<std::string> defect_list = {"箱体材质", "开关故障", "箱体损坏"};
+    matcher.addDefectsFromList(defect_list);
     
-    std::vector<std::string> keywords2 = {"隔离开关", "塑壳断路器", "微型断路器"};
-    matcher.addEnumItem("MET_BOX_002", "开关故障", keywords2);
-    
-    std::vector<std::string> keywords3 = {"变形破损", "老化", "缺失"};
-    matcher.addEnumItem("MET_BOX_003", "箱体损坏", keywords3);
-    
-    // 为测试添加简单的词向量（模拟 embedding）
-    // 使用简单的 one-hot 编码模拟向量
-    auto addTestVector = [&matcher](const std::string& word, int index) {
-        std::vector<float> vec(128, 0.0f);
-        vec[index % 128] = 1.0f;
-        matcher.addWordVector(word, vec);
-    };
-    
-    // 添加词向量
-    addTestVector("箱体材质", 0);
-    addTestVector("不锈钢", 1);
-    addTestVector("塑料", 2);
-    addTestVector("铁", 3);
-    addTestVector("隔离开关", 4);
-    addTestVector("塑壳断路器", 5);
-    addTestVector("微型断路器", 6);
-    addTestVector("变形破损", 7);
-    addTestVector("老化", 8);
-    addTestVector("缺失", 9);
+    std::cout << "Added defects: ";
+    for (const auto& defect : defect_list) {
+        std::cout << defect << " ";
+    }
+    std::cout << std::endl;
     
     // 测试匹配 - 箱体材质相关
     std::cout << "\nTest 1: 匹配箱体材质相关词汇" << std::endl;
@@ -147,82 +125,45 @@ void test_embedding_matcher() {
     }
 }
 
-// 测试 SemanticMatcher
-void test_semantic_matcher() {
-    std::cout << "Testing Semantic Matcher..." << std::endl;
-    
-    SemanticMatcher matcher;
-    
-    // 添加同义词词典
-    std::vector<std::string> wall_synonyms = {"墙壁", "墙面", "墙体", "墙"};
-    matcher.addTermDictionary("墙壁", wall_synonyms);
-    
-    std::vector<std::string> peel_synonyms = {"脱落", "掉落", "剥离", "掉皮"};
-    matcher.addTermDictionary("脱落", peel_synonyms);
-    
-    // 测试匹配
-    SemanticMatchResult result = matcher.findBestMatch("墙皮掉落");
-    
-    std::cout << "Input: 墙皮掉落" << std::endl;
-    std::cout << "Matched: " << result.matched_term << std::endl;
-    std::cout << "Similarity: " << result.similarity << std::endl;
-    
-    std::cout << "✓ Semantic Matcher test passed!" << std::endl;
-}
-
-// 测试配置加载 - 使用计量箱缺陷配置
-void test_config_loader() {
-    std::cout << "Testing Config Loader..." << std::endl;
-    
-    std::string json = R"({
-        "version": "1.0",
-        "description": "计量箱缺陷枚举配置",
-        "defects": [
-            {
-                "id": "MET_BOX_001",
-                "name": "箱体材质",
-                "description": "计量箱箱体材质类型",
-                "keywords": ["箱体材质", "不锈钢", "塑料", "铁"],
-                "categories": ["箱体", "材质"],
-                "threshold": 0.6,
-                "enabled": true
-            },
-            {
-                "id": "MET_BOX_002",
-                "name": "开关故障",
-                "description": "计量箱开关故障",
-                "keywords": ["隔离开关", "塑壳断路器", "微型断路器", "开关故障"],
-                "categories": ["开关"],
-                "threshold": 0.5,
-                "enabled": true
-            },
-            {
-                "id": "MET_BOX_003",
-                "name": "箱体损坏",
-                "description": "计量箱箱体损坏",
-                "keywords": ["变形破损", "老化", "缺失", "锈蚀"],
-                "categories": ["箱体", "损坏"],
-                "threshold": 0.5,
-                "enabled": true
-            }
-        ]
-    })";
+// 测试动态缺陷数组
+void test_dynamic_defects() {
+    std::cout << "Testing Dynamic Defects..." << std::endl;
     
     EmbeddingMatcher matcher;
     matcher.initialize("", "");
     
-    DefectConfigLoader loader;
-    loader.loadFromString(json);
-    loader.applyToMatcher(matcher);
+    // 用户输入的缺陷数组
+    std::vector<std::string> defect_list = {"铜质", "铁质", "铝合金质"};
     
-    assert(loader.getConfigCount() == 3);
+    // 添加缺陷
+    matcher.addDefectsFromList(defect_list);
     
-    std::cout << "Loaded defects:" << std::endl;
-    std::cout << "  - MET_BOX_001: 箱体材质" << std::endl;
-    std::cout << "  - MET_BOX_002: 开关故障" << std::endl;
-    std::cout << "  - MET_BOX_003: 箱体损坏" << std::endl;
+    std::cout << "Added defects: ";
+    for (const auto& defect : defect_list) {
+        std::cout << defect << " ";
+    }
+    std::cout << std::endl;
     
-    std::cout << "✓ Config Loader test passed!" << std::endl;
+    // 测试匹配
+    std::cout << "\nTest 1: 匹配铜质" << std::endl;
+    MatchResult result1 = matcher.findBestMatch("这个变电箱材质为铜");
+    std::cout << "Input: 这个变电箱材质为铜" << std::endl;
+    std::cout << "Matched: " << result1.matched_text << std::endl;
+    std::cout << "Similarity: " << result1.similarity << std::endl;
+    
+    std::cout << "\nTest 2: 匹配铁质" << std::endl;
+    MatchResult result2 = matcher.findBestMatch("箱子是铁质的");
+    std::cout << "Input: 箱子是铁质的" << std::endl;
+    std::cout << "Matched: " << result2.matched_text << std::endl;
+    std::cout << "Similarity: " << result2.similarity << std::endl;
+    
+    std::cout << "\nTest 3: 匹配铝合金质" << std::endl;
+    MatchResult result3 = matcher.findBestMatch("外壳是铝合金质");
+    std::cout << "Input: 外壳是铝合金质" << std::endl;
+    std::cout << "Matched: " << result3.matched_text << std::endl;
+    std::cout << "Similarity: " << result3.similarity << std::endl;
+    
+    std::cout << "✓ Dynamic Defects test passed!" << std::endl;
 }
 
 int main() {
@@ -235,8 +176,7 @@ int main() {
         test_json_parser();
         test_jieba_segmenter();
         test_embedding_matcher();
-        test_semantic_matcher();
-        test_config_loader();
+        test_dynamic_defects();
         
         std::cout << std::endl;
         std::cout << "========================================" << std::endl;

@@ -22,10 +22,6 @@ set(LIB_SOURCES
     src/embedding_model.cpp
     src/jieba_segmenter.cpp
     src/json_parser.cpp
-    src/defect_config_loader.cpp
-    src/resource_manager.cpp
-    src/semantic_matcher.cpp
-    src/embedding_config.cpp
 )
 
 # 如果需要 JNI 支持
@@ -36,7 +32,6 @@ endif()
 if(BUILD_ANDROID_JNI AND ANDROID)
     list(APPEND LIB_SOURCES
         src/embedding_matcher_jni.cpp
-        src/ai_glasses_jni.cpp
     )
 endif()
 
