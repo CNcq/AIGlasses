@@ -64,7 +64,9 @@ bool EmbeddingConfig::saveWordVectors(const std::string& file_path) const {
 
 bool EmbeddingConfig::loadFromJson(const std::string& json_string) {
     JsonValue root;
-    if (!JsonParser::tryParse(json_string, root)) {
+    try {
+        root = JsonParser::parse(json_string);
+    } catch (...) {
         std::cerr << "Failed to parse JSON" << std::endl;
         return false;
     }

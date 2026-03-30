@@ -96,8 +96,8 @@ public:
     bool isEnumItemEnabled(const std::string& id) const;
     
     // 测试用：获取内部实现（用于添加词向量）
-    Impl* getImpl() { return impl_.get(); }
-    const Impl* getImpl() const { return impl_.get(); }
+    struct Impl* getImpl() { return impl_.get(); }
+    const struct Impl* getImpl() const { return impl_.get(); }
 
 private:
     float cosineSimilarity(const EmbeddingVector& v1, const EmbeddingVector& v2);
