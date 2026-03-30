@@ -111,17 +111,26 @@ verify_build() {
         cd ..
     fi
     
-    if [ -f "build_desktop/lib/libai_glasses.so" ]; then
+    # 检查静态库或共享库
+    if [ -f "build_desktop/lib/libai_glasses.a" ]; then
+        echo_info "静态库：build_desktop/lib/libai_glasses.a"
+        echo_info "文件大小：$(du -h build_desktop/lib/libai_glasses.a | cut -f1)"
+        echo_success "桌面版本构建成功"
+    elif [ -f "build_desktop/lib/libai_glasses.so" ]; then
         echo_info "共享库：build_desktop/lib/libai_glasses.so"
         echo_info "文件大小：$(du -h build_desktop/lib/libai_glasses.so | cut -f1)"
         echo_success "桌面版本构建成功"
     else
-        echo_error "构建失败：找不到 libai_glasses.so"
+        echo_error "构建失败：找不到 libai_glasses.a 或 libai_glasses.so"
         exit 1
     fi
     
-    # 检查符号
-    echo_info "导出符号数：$(nm -D build_desktop/lib/libai_glasses.so | grep " T " | wc -l)"
+    # 检查符号（只对共享库）
+    if [ -f "build_desktop/lib/libai_glasses.so" ]; then
+        echo_info "导出符号数：$(nm -D build_desktop/lib/libai_glasses.so | grep " T " | wc -l)"
+    else
+        echo_info "静态库：libai_glasses.a（静态库不导出符号）"
+    fi
 }
 
 # 主函数
