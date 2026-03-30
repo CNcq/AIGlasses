@@ -27,6 +27,7 @@ public:
     bool loadWordVectors(const std::string& word_vec_path);
     
     void addWordVector(const std::string& word, const std::vector<float>& vector);
+    void addWordVector(const std::string& word, const std::array<float, 128>& vector);
     
     size_t getEmbeddingDim() const;
     

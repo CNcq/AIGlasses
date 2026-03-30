@@ -115,6 +115,11 @@ void EmbeddingModel::addWordVector(const std::string& word, const std::vector<fl
     }
 }
 
+void EmbeddingModel::addWordVector(const std::string& word, const std::array<float, 128>& vector) {
+    std::vector<float> vec(vector.begin(), vector.end());
+    addWordVector(word, vec);
+}
+
 size_t EmbeddingModel::getEmbeddingDim() const {
     return impl_->embedding_dim;
 }

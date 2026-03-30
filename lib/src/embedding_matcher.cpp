@@ -564,7 +564,8 @@ bool EmbeddingMatcher::addWordVector(const std::string& word, const std::vector<
         emb[i] = vector[i];
     }
     
-    return impl_->embedding_model->addWordVector(word, emb);
+    impl_->embedding_model->addWordVector(word, emb);
+    return true;
 }
 
 }
