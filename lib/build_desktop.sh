@@ -91,6 +91,11 @@ configure_cmake() {
 build() {
     echo_step "开始编译..."
     
+    # 确保在正确的目录
+    if [ ! -f "Makefile" ]; then
+        cd build_desktop
+    fi
+    
     make -j$(nproc)
     
     echo_success "编译完成"
@@ -100,7 +105,10 @@ build() {
 verify_build() {
     echo_step "验证构建结果..."
     
-    cd ..
+    # 确保在正确的目录
+    if [ -f "Makefile" ]; then
+        cd ..
+    fi
     
     if [ -f "build_desktop/lib/libai_glasses.so" ]; then
         echo_info "共享库：build_desktop/lib/libai_glasses.so"
@@ -131,7 +139,6 @@ main() {
             clean_build
             setup_build_dir
             configure_cmake
-            cd ..
             build
             verify_build
             ;;
@@ -140,7 +147,6 @@ main() {
             clean_build
             setup_build_dir
             configure_cmake
-            cd ..
             build
             verify_build
             ;;
