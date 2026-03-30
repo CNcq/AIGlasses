@@ -208,13 +208,16 @@ std::vector<MatchResult> EmbeddingMatcher::findAllMatches(const std::string& inp
         
         float sim = cosineSimilarity(input_embedding, enum_item.embedding);
         
-        MatchResult result;
-        result.input_text = input_text;
-        result.matched_id = enum_item.id;
-        result.matched_text = enum_item.text;
-        result.similarity = sim;
-        result.is_match = sim >= enum_item.threshold;
-        results.push_back(result);
+        // 只添加有实际匹配的结果
+        if (sim > 0.0f) {
+            MatchResult result;
+            result.input_text = input_text;
+            result.matched_id = enum_item.id;
+            result.matched_text = enum_item.text;
+            result.similarity = sim;
+            result.is_match = sim >= enum_item.threshold;
+            results.push_back(result);
+        }
     }
     
     std::sort(results.begin(), results.end(), [](const MatchResult& a, const MatchResult& b) {

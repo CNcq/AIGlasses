@@ -25,6 +25,7 @@ set(LIB_SOURCES
     src/defect_config_loader.cpp
     src/resource_manager.cpp
     src/semantic_matcher.cpp
+    src/embedding_config.cpp
 )
 
 # 如果需要 JNI 支持

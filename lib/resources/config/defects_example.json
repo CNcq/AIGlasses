@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "description": "缺陷枚举配置示例",
+  "description": "计量箱缺陷枚举配置",
   "metadata": {
     "author": "AI Glasses Team",
     "created_at": "2024-01-01",
@@ -9,167 +9,790 @@
   },
   "defects": [
     {
-      "id": "DEFECT_001",
-      "name": "墙皮脱落",
-      "description": "墙面涂层或抹灰层脱落现象",
+      "id": "MET_BOX_001",
+      "name": "箱体材质",
+      "description": "计量箱箱体材质类型",
       "keywords": [
-        "墙皮脱落",
-        "墙面脱落",
-        "墙皮剥落",
-        "墙壁掉皮",
-        "墙体脱落",
-        "墙面掉皮",
-        "墙皮损坏",
-        "墙皮缺陷",
-        "墙留坠",
-        "墙皮掉了",
-        "墙皮掉下来",
-        "墙面破损",
-        "抹灰层脱落",
-        "涂层脱落"
+        "箱体材质",
+        "材质",
+        "不锈钢",
+        "塑料",
+        "铁",
+        "合金",
+        "玻璃钢",
+        "塑钢",
+        "木质",
+        "PC+ABS",
+        "镀锌冷轧钢板",
+        "纸质",
+        "不锈钢冷轧钢板",
+        "热镀锌钢板",
+        "SMC",
+        "其他"
       ],
-      "categories": ["墙面", "装饰层"],
-      "threshold": 0.5,
-      "enabled": true
-    },
-    {
-      "id": "DEFECT_002",
-      "name": "裂缝",
-      "description": "墙体或构件表面出现裂纹",
-      "keywords": [
-        "裂缝",
-        "裂痕",
-        "开裂",
-        "缝隙",
-        "裂纹",
-        "开裂缝",
-        "墙面裂缝",
-        "墙体开裂",
-        "墙面裂纹",
-        "裂开",
-        "有裂缝",
-        "裂痕",
-        "细缝",
-        "龟裂"
-      ],
-      "categories": ["结构", "墙面"],
-      "threshold": 0.55,
-      "enabled": true
-    },
-    {
-      "id": "DEFECT_003",
-      "name": "空鼓",
-      "description": "墙面或地面空鼓现象",
-      "keywords": [
-        "空鼓",
-        "空洞",
-        "墙面空鼓",
-        "墙壁空鼓",
-        "墙体空鼓",
-        "敲起来空空的",
-        "敲击有空声",
-        "抹灰空鼓",
-        "瓷砖空鼓"
-      ],
-      "categories": ["墙面", "地面"],
-      "threshold": 0.5,
-      "enabled": true
-    },
-    {
-      "id": "DEFECT_004",
-      "name": "渗水",
-      "description": "墙体或屋面渗漏水现象",
-      "keywords": [
-        "渗水",
-        "漏水",
-        "洇水",
-        "潮湿",
-        "水渍",
-        "浸水",
-        "渗水",
-        "漏水了",
-        "有水渍",
-        "墙面潮湿",
-        "渗漏水",
-        "滴水",
-        "湿漉漉"
-      ],
-      "categories": ["防水", "屋面"],
+      "categories": ["箱体", "材质"],
       "threshold": 0.6,
       "enabled": true
     },
     {
-      "id": "DEFECT_005",
-      "name": "发霉",
-      "description": "墙面或角落发霉长斑",
+      "id": "MET_BOX_002",
+      "name": "安装运行环境",
+      "description": "计量箱安装的运行环境",
       "keywords": [
-        "发霉",
-        "霉菌",
-        "霉斑",
-        "长霉",
-        "霉变",
-        "发黑",
-        "黑斑",
-        "长毛了",
-        "有霉点",
-        "墙面发霉",
-        "角落长霉",
-        "黑色斑点"
+        "安装运行环境",
+        "运行环境",
+        "安装环境",
+        "建筑内",
+        "露天"
       ],
-      "categories": ["墙面", "潮湿"],
-      "threshold": 0.55,
-      "enabled": true
-    },
-    {
-      "id": "DEFECT_006",
-      "name": "钢筋外露",
-      "description": "混凝土中钢筋暴露在外",
-      "keywords": [
-        "钢筋外露",
-        "钢筋暴露",
-        "看到钢筋",
-        "钢筋露出来了",
-        "钢筋混凝土脱落",
-        "钢筋可见",
-        "露筋",
-        "钢筋生锈"
-      ],
-      "categories": ["结构", "混凝土"],
-      "threshold": 0.65,
-      "enabled": true
-    },
-    {
-      "id": "DEFECT_007",
-      "name": "混凝土破损",
-      "description": "混凝土表面破损或剥落",
-      "keywords": [
-        "混凝土破损",
-        "混凝土剥落",
-        "砼破损",
-        "混凝土掉角",
-        "表面破损",
-        "混凝土裂缝",
-        "砼剥落"
-      ],
-      "categories": ["结构", "混凝土"],
+      "categories": ["安装", "环境"],
       "threshold": 0.6,
       "enabled": true
     },
     {
-      "id": "DEFECT_008",
-      "name": "脱落",
-      "description": "构件或材料脱落",
+      "id": "MET_BOX_003",
+      "name": "安装方式",
+      "description": "计量箱的安装方式",
       "keywords": [
-        "脱落",
-        "掉下来",
+        "安装方式",
+        "悬挂安装式",
+        "嵌入安装式",
+        "落地安装式",
+        "安装",
+        "悬挂",
+        "嵌入",
+        "落地"
+      ],
+      "categories": ["安装", "方式"],
+      "threshold": 0.6,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_004",
+      "name": "箱体类别",
+      "description": "计量箱的类别",
+      "keywords": [
+        "箱体类别",
+        "箱体类型",
+        "计量箱",
+        "计量屏",
+        "计量柜",
+        "箱体",
+        "类别",
+        "类型"
+      ],
+      "categories": ["箱体", "分类"],
+      "threshold": 0.6,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_005",
+      "name": "箱体类型",
+      "description": "计量箱的具体类型",
+      "keywords": [
+        "箱体类型",
+        "单体表箱",
+        "合体表箱",
+        "虚拟表箱",
+        "混合",
+        "单体",
+        "合体",
+        "虚拟",
+        "混合"
+      ],
+      "categories": ["箱体", "类型"],
+      "threshold": 0.6,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_006",
+      "name": "采集方式",
+      "description": "计量箱的数据采集方式",
+      "keywords": [
+        "采集方式",
+        "窄带载波",
+        "RS-485通信",
+        "宽带载波",
+        "采集",
+        "通信",
+        "载波",
+        "RS485"
+      ],
+      "categories": ["采集", "通信"],
+      "threshold": 0.6,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_007",
+      "name": "接户方式",
+      "description": "计量箱的接户方式",
+      "keywords": [
+        "接户方式",
+        "电缆",
+        "接户线",
+        "电缆接户线混合",
+        "接户",
+        "电缆混合"
+      ],
+      "categories": ["接户", "方式"],
+      "threshold": 0.6,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_008",
+      "name": "接户线类型",
+      "description": "接户线的类型",
+      "keywords": [
+        "接户线类型",
+        "单股铜线",
+        "多股铜线",
+        "铝导线",
+        "接户线",
+        "铜线",
+        "铝线"
+      ],
+      "categories": ["接户", "线路"],
+      "threshold": 0.6,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_009",
+      "name": "表前开关型式",
+      "description": "电能表前的开关类型",
+      "keywords": [
+        "表前开关型式",
+        "表前开关",
+        "隔离开关",
+        "塑壳断路器",
+        "微型断路器",
+        "熔断器",
+        "铜排",
+        "表前",
+        "开关",
+        "型式"
+      ],
+      "categories": ["开关", "表前"],
+      "threshold": 0.6,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_010",
+      "name": "表后开关型式",
+      "description": "电能表后的开关类型",
+      "keywords": [
+        "表后开关型式",
+        "表后开关",
+        "隔离开关",
+        "塑壳断路器",
+        "微型断路器",
+        "熔断器",
+        "铜排",
+        "表后",
+        "开关",
+        "型式"
+      ],
+      "categories": ["开关", "表后"],
+      "threshold": 0.6,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_011",
+      "name": "进户线类型",
+      "description": "进户线的类型",
+      "keywords": [
+        "进户线类型",
+        "进户线",
+        "多股铜线",
+        "单股铜线",
+        "铝导线",
+        "进户",
+        "线路"
+      ],
+      "categories": ["进户", "线路"],
+      "threshold": 0.6,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_012",
+      "name": "计量箱安装",
+      "description": "计量箱的安装情况",
+      "keywords": [
+        "计量箱安装",
+        "安装",
+        "无缺陷",
+        "位置倾斜",
+        "离地距离小于80cm",
+        "不牢固",
+        "计量箱",
+        "安装情况"
+      ],
+      "categories": ["安装", "计量箱"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_013",
+      "name": "箱体",
+      "description": "箱体的状况",
+      "keywords": [
+        "箱体",
+        "无缺陷",
+        "变形破损",
+        "锈蚀破损",
+        "金属",
+        "老化破损",
+        "塑料",
+        "箱体状况",
+        "箱体损坏"
+      ],
+      "categories": ["箱体", "损坏"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_014",
+      "name": "观察窗",
+      "description": "计量箱观察窗的状况",
+      "keywords": [
+        "观察窗",
+        "无缺陷",
+        "缺失",
+        "变形无法关闭",
+        "玻璃破损",
+        "观察窗状况",
+        "观察窗损坏"
+      ],
+      "categories": ["观察窗", "损坏"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_015",
+      "name": "计量箱外部线管",
+      "description": "计量箱外部线管的状况",
+      "keywords": [
+        "计量箱外部线管",
+        "外部线管",
+        "无缺陷",
+        "布线歪斜",
+        "不牢固",
+        "露线",
+        "线管",
+        "外部"
+      ],
+      "categories": ["线管", "外部"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_016",
+      "name": "孔洞",
+      "description": "孔洞的封堵情况",
+      "keywords": [
+        "孔洞",
+        "无缺陷",
+        "未封堵",
+        "孔洞封堵",
+        "封堵"
+      ],
+      "categories": ["安全", "封堵"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_017",
+      "name": "锁具",
+      "description": "计量箱锁具的状况",
+      "keywords": [
+        "锁具",
+        "无缺陷",
+        "破损",
+        "锁具状况",
+        "锁具损坏"
+      ],
+      "categories": ["安全", "锁具"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_018",
+      "name": "户号牌",
+      "description": "户号牌的状况",
+      "keywords": [
+        "户号牌",
+        "无缺陷",
+        "缺失",
+        "户号牌状况",
+        "户号牌损坏"
+      ],
+      "categories": ["标识", "户号"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_019",
+      "name": "资产铭牌",
+      "description": "资产铭牌的状况",
+      "keywords": [
+        "资产铭牌",
+        "无缺陷",
+        "缺失",
+        "资产牌",
+        "铭牌",
+        "资产铭牌状况"
+      ],
+      "categories": ["标识", "资产"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_020",
+      "name": "箱内杂物",
+      "description": "计量箱内是否有杂物",
+      "keywords": [
+        "箱内杂物",
+        "无缺陷",
+        "有缺陷",
+        "箱内",
+        "杂物",
+        "箱内状况"
+      ],
+      "categories": ["安全", "整洁"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_021",
+      "name": "电能表进出线情况",
+      "description": "电能表进出线的状况",
+      "keywords": [
+        "电能表进出线情况",
+        "进出线情况",
+        "无缺陷",
+        "导线老化",
+        "绝缘开裂",
+        "线径不足",
+        "绝缘破损裸露",
+        "连接部位发热灼烧",
+        "进出线",
+        "电能表"
+      ],
+      "categories": ["电能表", "线路"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_022",
+      "name": "二次回路状态",
+      "description": "二次回路的状况",
+      "keywords": [
+        "二次回路状态",
+        "二次回路",
+        "无缺陷",
+        "非BV-2.5mm2单股铜芯黑色导线",
+        "线径不符",
+        "老化",
+        "回路",
+        "二次"
+      ],
+      "categories": ["回路", "二次"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_023",
+      "name": "表前开关状态",
+      "description": "表前开关的状况",
+      "keywords": [
+        "表前开关状态",
+        "表前开关",
+        "无缺陷",
+        "容量不符",
+        "开关故障",
+        "表前",
+        "开关"
+      ],
+      "categories": ["开关", "表前"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_024",
+      "name": "表后开关状态",
+      "description": "表后开关的状况",
+      "keywords": [
+        "表后开关状态",
+        "表后开关",
+        "无缺陷",
+        "容量不符",
+        "开关故障",
+        "表后",
+        "开关"
+      ],
+      "categories": ["开关", "表后"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_025",
+      "name": "安装环境",
+      "description": "计量箱的安装环境",
+      "keywords": [
+        "安装环境",
+        "无缺陷",
+        "环境不符合要求",
+        "可视区域内存在杂物",
+        "安装",
+        "环境"
+      ],
+      "categories": ["安装", "环境"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_026",
+      "name": "分格线槽情况",
+      "description": "分格线槽的状况",
+      "keywords": [
+        "分格线槽情况",
+        "分格线槽",
+        "无缺陷",
+        "缺失",
+        "分格",
+        "线槽"
+      ],
+      "categories": ["线槽", "分格"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_027",
+      "name": "接插件状态",
+      "description": "接插件的状况",
+      "keywords": [
+        "接插件状态",
+        "接插件",
+        "无缺陷",
+        "故障",
+        "接插",
+        "插件"
+      ],
+      "categories": ["接插件", "状态"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_028",
+      "name": "分线盒状态",
+      "description": "分线盒的状况",
+      "keywords": [
+        "分线盒状态",
+        "分线盒",
+        "无缺陷",
+        "故障",
+        "分线",
+        "分线盒状况"
+      ],
+      "categories": ["分线盒", "状态"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_029",
+      "name": "联合接线盒状态",
+      "description": "联合接线盒的状况",
+      "keywords": [
+        "联合接线盒状态",
+        "联合接线盒",
+        "无缺陷",
+        "故障",
+        "联合",
+        "接线盒",
+        "联合接线盒状况"
+      ],
+      "categories": ["接线盒", "联合"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_030",
+      "name": "联合接线盒封印",
+      "description": "联合接线盒封印的状况",
+      "keywords": [
+        "联合接线盒封印",
+        "封印",
+        "无缺陷",
+        "破损",
+        "联合",
+        "接线盒",
+        "封印状况"
+      ],
+      "categories": ["封印", "联合"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_031",
+      "name": "用户出线状态",
+      "description": "用户出线的状况",
+      "keywords": [
+        "用户出线状态",
+        "用户出线",
+        "无缺陷",
+        "布线不整洁、不美观",
+        "无滴水弯",
+        "不满足安全距离",
+        "线径不符",
+        "用户",
+        "出线"
+      ],
+      "categories": ["用户", "出线"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_032",
+      "name": "接地状态",
+      "description": "计量箱的接地状况",
+      "keywords": [
+        "接地状态",
+        "无缺陷",
+        "金属箱无接地",
+        "接地损坏",
+        "跨箱采集通信线屏蔽层未接地",
+        "接地",
+        "金属箱",
+        "屏蔽层"
+      ],
+      "categories": ["接地", "安全"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_033",
+      "name": "进户PVC管状态",
+      "description": "进户PVC管的状况",
+      "keywords": [
+        "进户PVC管状态",
+        "进户PVC管",
+        "无缺陷",
         "掉落",
-        "剥离",
-        "脱离",
-        "分离",
-        "掉下来了",
-        "松脱"
+        "老化",
+        "进户",
+        "PVC管"
       ],
-      "categories": ["通用"],
+      "categories": ["PVC管", "进户"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_034",
+      "name": "用户出线PVC管状态",
+      "description": "用户出线PVC管的状况",
+      "keywords": [
+        "用户出线PVC管状态",
+        "用户出线PVC管",
+        "无缺陷",
+        "掉落",
+        "老化",
+        "用户",
+        "出线",
+        "PVC管"
+      ],
+      "categories": ["PVC管", "用户"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_035",
+      "name": "围墙",
+      "description": "计量箱周围围墙的状况",
+      "keywords": [
+        "围墙",
+        "无缺陷",
+        "表箱在墙内",
+        "围墙状况",
+        "表箱",
+        "墙内"
+      ],
+      "categories": ["围墙", "安全"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_036",
+      "name": "计量箱周围环境",
+      "description": "计量箱周围的环境状况",
+      "keywords": [
+        "计量箱周围环境",
+        "周围环境",
+        "无缺陷",
+        "有杂物",
+        "有易燃物",
+        "周围",
+        "环境"
+      ],
+      "categories": ["环境", "安全"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_037",
+      "name": "防雨",
+      "description": "计量箱的防雨措施",
+      "keywords": [
+        "防雨",
+        "无缺陷",
+        "无防雨措施",
+        "防雨措施",
+        "防雨状况"
+      ],
+      "categories": ["防雨", "安全"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_038",
+      "name": "防潮",
+      "description": "计量箱的防潮措施",
+      "keywords": [
+        "防潮",
+        "无缺陷",
+        "地势低洼易进",
+        "防潮措施",
+        "地势",
+        "低洼"
+      ],
+      "categories": ["防潮", "安全"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_039",
+      "name": "电能表安装",
+      "description": "电能表的安装情况",
+      "keywords": [
+        "电能表安装",
+        "安装",
+        "无缺陷",
+        "位置或接线工艺不符合要求",
+        "不牢固",
+        "电能表",
+        "安装情况"
+      ],
+      "categories": ["电能表", "安装"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_040",
+      "name": "电能表外观",
+      "description": "电能表的外观状况",
+      "keywords": [
+        "电能表外观",
+        "外观",
+        "无缺陷",
+        "损坏或异常",
+        "显示不完整或不清晰",
+        "电能表",
+        "外观状况"
+      ],
+      "categories": ["电能表", "外观"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_041",
+      "name": "进出导线",
+      "description": "进出导线的状况",
+      "keywords": [
+        "进出导线",
+        "无缺陷",
+        "测温过高",
+        "进出",
+        "导线",
+        "测温"
+      ],
+      "categories": ["导线", "温度"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_042",
+      "name": "指示灯",
+      "description": "指示灯的状况",
+      "keywords": [
+        "指示灯",
+        "无缺陷",
+        "不齐全",
+        "脉动异常",
+        "指示灯状况",
+        "指示灯损坏"
+      ],
+      "categories": ["指示灯", "状态"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_043",
+      "name": "电压",
+      "description": "电压显示的状况",
+      "keywords": [
+        "电压",
+        "无缺陷",
+        "与检测值不一致",
+        "电压显示",
+        "电压值"
+      ],
+      "categories": ["电压", "显示"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_044",
+      "name": "电流",
+      "description": "电流显示的状况",
+      "keywords": [
+        "电流",
+        "无缺陷",
+        "与检测值不一致",
+        "电流显示",
+        "电流值"
+      ],
+      "categories": ["电流", "显示"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_045",
+      "name": "功率",
+      "description": "功率显示的状况",
+      "keywords": [
+        "功率",
+        "无缺陷",
+        "与检测值不一致",
+        "功率显示",
+        "功率值"
+      ],
+      "categories": ["功率", "显示"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "MET_BOX_046",
+      "name": "电量",
+      "description": "电量显示的状况",
+      "keywords": [
+        "电量",
+        "无缺陷",
+        "显示值与红外抄表值不一致",
+        "显示值与采集系统不一致",
+        "电量显示",
+        "电量值",
+        "抄表",
+        "采集"
+      ],
+      "categories": ["电量", "显示"],
       "threshold": 0.5,
       "enabled": true
     }

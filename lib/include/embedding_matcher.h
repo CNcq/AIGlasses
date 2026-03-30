@@ -50,6 +50,9 @@ public:
     
     bool loadDefectConfigFromString(const std::string& json_string);
     
+    bool loadEmbeddingConfig(const std::string& config_path);
+    bool loadEmbeddingConfigFromString(const std::string& json_string);
+    
     bool precomputeAndSaveEnumVectors(const std::string& cache_path);
     
     bool loadPrecomputedEnumVectors(const std::string& cache_path);
@@ -91,6 +94,10 @@ public:
     void disableEnumItem(const std::string& id);
     
     bool isEnumItemEnabled(const std::string& id) const;
+    
+    // 测试用：获取内部实现（用于添加词向量）
+    Impl* getImpl() { return impl_.get(); }
+    const Impl* getImpl() const { return impl_.get(); }
 
 private:
     float cosineSimilarity(const EmbeddingVector& v1, const EmbeddingVector& v2);
