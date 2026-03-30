@@ -1,0 +1,177 @@
+{
+  "version": "1.0",
+  "description": "缺陷枚举配置示例",
+  "metadata": {
+    "author": "AI Glasses Team",
+    "created_at": "2024-01-01",
+    "embedding_dim": 128,
+    "default_threshold": 0.5
+  },
+  "defects": [
+    {
+      "id": "DEFECT_001",
+      "name": "墙皮脱落",
+      "description": "墙面涂层或抹灰层脱落现象",
+      "keywords": [
+        "墙皮脱落",
+        "墙面脱落",
+        "墙皮剥落",
+        "墙壁掉皮",
+        "墙体脱落",
+        "墙面掉皮",
+        "墙皮损坏",
+        "墙皮缺陷",
+        "墙留坠",
+        "墙皮掉了",
+        "墙皮掉下来",
+        "墙面破损",
+        "抹灰层脱落",
+        "涂层脱落"
+      ],
+      "categories": ["墙面", "装饰层"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "DEFECT_002",
+      "name": "裂缝",
+      "description": "墙体或构件表面出现裂纹",
+      "keywords": [
+        "裂缝",
+        "裂痕",
+        "开裂",
+        "缝隙",
+        "裂纹",
+        "开裂缝",
+        "墙面裂缝",
+        "墙体开裂",
+        "墙面裂纹",
+        "裂开",
+        "有裂缝",
+        "裂痕",
+        "细缝",
+        "龟裂"
+      ],
+      "categories": ["结构", "墙面"],
+      "threshold": 0.55,
+      "enabled": true
+    },
+    {
+      "id": "DEFECT_003",
+      "name": "空鼓",
+      "description": "墙面或地面空鼓现象",
+      "keywords": [
+        "空鼓",
+        "空洞",
+        "墙面空鼓",
+        "墙壁空鼓",
+        "墙体空鼓",
+        "敲起来空空的",
+        "敲击有空声",
+        "抹灰空鼓",
+        "瓷砖空鼓"
+      ],
+      "categories": ["墙面", "地面"],
+      "threshold": 0.5,
+      "enabled": true
+    },
+    {
+      "id": "DEFECT_004",
+      "name": "渗水",
+      "description": "墙体或屋面渗漏水现象",
+      "keywords": [
+        "渗水",
+        "漏水",
+        "洇水",
+        "潮湿",
+        "水渍",
+        "浸水",
+        "渗水",
+        "漏水了",
+        "有水渍",
+        "墙面潮湿",
+        "渗漏水",
+        "滴水",
+        "湿漉漉"
+      ],
+      "categories": ["防水", "屋面"],
+      "threshold": 0.6,
+      "enabled": true
+    },
+    {
+      "id": "DEFECT_005",
+      "name": "发霉",
+      "description": "墙面或角落发霉长斑",
+      "keywords": [
+        "发霉",
+        "霉菌",
+        "霉斑",
+        "长霉",
+        "霉变",
+        "发黑",
+        "黑斑",
+        "长毛了",
+        "有霉点",
+        "墙面发霉",
+        "角落长霉",
+        "黑色斑点"
+      ],
+      "categories": ["墙面", "潮湿"],
+      "threshold": 0.55,
+      "enabled": true
+    },
+    {
+      "id": "DEFECT_006",
+      "name": "钢筋外露",
+      "description": "混凝土中钢筋暴露在外",
+      "keywords": [
+        "钢筋外露",
+        "钢筋暴露",
+        "看到钢筋",
+        "钢筋露出来了",
+        "钢筋混凝土脱落",
+        "钢筋可见",
+        "露筋",
+        "钢筋生锈"
+      ],
+      "categories": ["结构", "混凝土"],
+      "threshold": 0.65,
+      "enabled": true
+    },
+    {
+      "id": "DEFECT_007",
+      "name": "混凝土破损",
+      "description": "混凝土表面破损或剥落",
+      "keywords": [
+        "混凝土破损",
+        "混凝土剥落",
+        "砼破损",
+        "混凝土掉角",
+        "表面破损",
+        "混凝土裂缝",
+        "砼剥落"
+      ],
+      "categories": ["结构", "混凝土"],
+      "threshold": 0.6,
+      "enabled": true
+    },
+    {
+      "id": "DEFECT_008",
+      "name": "脱落",
+      "description": "构件或材料脱落",
+      "keywords": [
+        "脱落",
+        "掉下来",
+        "掉落",
+        "剥离",
+        "脱离",
+        "分离",
+        "掉下来了",
+        "松脱"
+      ],
+      "categories": ["通用"],
+      "threshold": 0.5,
+      "enabled": true
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+
+# 查找依赖
+find_dependency(Threads)
+
+# 包含导出的目标
+include("${CMAKE_CURRENT_LIST_DIR}/ai_glasses-targets.cmake")
+
+# 检查所需组件
+check_required_components(ai_glasses)
+
+# 打印信息
+message(STATUS "Found ai_glasses: ${ai_glasses_DIR}")
