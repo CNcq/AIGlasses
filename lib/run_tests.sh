@@ -89,12 +89,21 @@ compile_tests() {
         exit 1
     fi
     
+    # 检查库文件是否存在
+    if [ ! -f "./build_android/x86_64/lib/libai_glasses.so" ]; then
+        echo_error "找不到库文件"
+        echo_info "请先运行构建：./build_android.sh"
+        exit 1
+    fi
+    
     # 检查编译器
     if ! command -v g++ &> /dev/null; then
         echo_error "g++ 未安装"
         echo_info "安装：sudo apt install g++"
         exit 1
     fi
+    
+    echo_info "编译命令：g++ -std=c++14 -I./include -L./build_android/x86_64/lib -o test_library test_library.cpp -lai_glasses -Wl,-rpath,./build_android/x86_64/lib"
     
     g++ -std=c++14 \
         -I./include \
@@ -110,9 +119,13 @@ compile_tests() {
     else
         echo_error "测试程序编译失败"
         echo_info "可能的原因："
-        echo_info "  1. 库文件不完整或损坏"
-        echo_info "  2. 缺少依赖库"
-        echo_info "  3. 头文件不匹配"
+        echo_info "  1. 库文件不完整或损坏 - 请重新运行 ./build_android.sh"
+        echo_info "  2. 缺少符号定义 - 检查是否所有源文件都已添加到 CMakeLists.txt"
+        echo_info "  3. 头文件不匹配 - 清理并重新构建"
+        echo_info ""
+        echo_info "建议执行："
+        echo_info "  rm -rf build_android"
+        echo_info "  ./build_android.sh"
         exit 1
     fi
 }
