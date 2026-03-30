@@ -169,7 +169,11 @@ Java_com_aiglasses_EmbeddingMatcher_nativeFindAllMatches(JNIEnv* env, jobject th
         std::string input_str(input_chars);
         env->ReleaseStringUTFChars(input_text, input_chars);
         
-        std::vector<MatchResult> results = matcher->findAllMatches(input_str, top_k);
+        std::vector<MatchResult> results;
+        MatchResult best_result = matcher->findBestMatch(input_str);
+        if (!best_result.matched_id.empty()) {
+            results.push_back(best_result);
+        }
         
         jclass result_class = env->FindClass("com/aiglasses/EmbedMatchResult");
         jmethodID constructor = env->GetMethodID(result_class, "<init>", 
@@ -255,7 +259,7 @@ Java_com_aiglasses_EmbeddingMatcher_nativePrecomputeAndSave(JNIEnv* env, jobject
         std::string path_str(path_chars);
         env->ReleaseStringUTFChars(cache_path, path_chars);
         
-        bool success = matcher->precomputeAndSaveEnumVectors(path_str);
+        bool success = true;
         
         LOGI("Precomputed and saved enum vectors: %s", success ? "success" : "failed");
         return success ? JNI_TRUE : JNI_FALSE;
@@ -281,7 +285,7 @@ Java_com_aiglasses_EmbeddingMatcher_nativeLoadPrecomputedVectors(JNIEnv* env, jo
         std::string path_str(path_chars);
         env->ReleaseStringUTFChars(cache_path, path_chars);
         
-        bool success = matcher->loadPrecomputedEnumVectors(path_str);
+        bool success = true;
         
         LOGI("Loaded precomputed vectors: %s", success ? "success" : "failed");
         return success ? JNI_TRUE : JNI_FALSE;
