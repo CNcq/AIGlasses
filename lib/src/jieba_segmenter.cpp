@@ -63,7 +63,6 @@ struct JiebaSegmenter::Impl {
                     }
                 } else {
                     std::string sub_word;
-                    bool all_found = true;
                     for (size_t k = 0; k < len && (i + k) < text.size(); ++k) {
                         if (static_cast<unsigned char>(text[i + k]) > 127) {
                             sub_word += text.substr(i + k, 3);

@@ -126,7 +126,9 @@ float SemanticMatcher::calculateCosineSimilarity(const std::string& str1, const 
     float dot_product = 0.0f;
     float norm1 = 0.0f, norm2 = 0.0f;
     
-    for (const auto& [token, count] : freq1) {
+    for (const auto& pair : freq1) {
+        const auto& token = pair.first;
+        const auto& count = pair.second;
         norm1 += static_cast<float>(count * count);
         auto it = freq2.find(token);
         if (it != freq2.end()) {
@@ -134,7 +136,9 @@ float SemanticMatcher::calculateCosineSimilarity(const std::string& str1, const 
         }
     }
     
-    for (const auto& [token, count] : freq2) {
+    for (const auto& pair : freq2) {
+        const auto& token = pair.first;
+        const auto& count = pair.second;
         norm2 += static_cast<float>(count * count);
     }
     
@@ -162,7 +166,9 @@ SemanticMatchResult SemanticMatcher::findBestMatch(const std::string& input_text
     result.is_match = false;
     result.matched_term = "";
     
-    for (const auto& [standard_term, synonyms] : impl_->term_dictionary) {
+    for (const auto& pair : impl_->term_dictionary) {
+        const auto& standard_term = pair.first;
+        const auto& synonyms = pair.second;
         float best_sim = calculateCombinedSimilarity(input_text, standard_term);
         std::string best_term = standard_term;
         
@@ -187,7 +193,9 @@ SemanticMatchResult SemanticMatcher::findBestMatch(const std::string& input_text
 std::vector<SemanticMatchResult> SemanticMatcher::findAllMatches(const std::string& input_text, int top_k) {
     std::vector<SemanticMatchResult> results;
     
-    for (const auto& [standard_term, synonyms] : impl_->term_dictionary) {
+    for (const auto& pair : impl_->term_dictionary) {
+        const auto& standard_term = pair.first;
+        const auto& synonyms = pair.second;
         float best_sim = calculateCombinedSimilarity(input_text, standard_term);
         
         for (const auto& syn : synonyms) {
