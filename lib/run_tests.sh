@@ -60,9 +60,13 @@ test_shared_library() {
     echo_info "检查文件类型..."
     file ./build_android/x86_64/lib/libai_glasses.so
     
-    # 检查依赖
+    # 检查依赖（仅适用于本地库，Android 库会跳过）
     echo_info "检查依赖库..."
-    ldd ./build_android/x86_64/lib/libai_glasses.so || true
+    if ldd ./build_android/x86_64/lib/libai_glasses.so 2>&1 | grep -q "invalid ELF header\|not a dynamic executable"; then
+        echo_info "注意：这是 Android 库，无法在桌面系统上检查依赖（这是正常的）"
+    else
+        ldd ./build_android/x86_64/lib/libai_glasses.so || true
+    fi
     
     # 检查符号表
     echo_info "检查导出符号..."
@@ -98,12 +102,17 @@ compile_tests() {
         -o test_library \
         test_library.cpp \
         -lai_glasses \
-        -Wl,-rpath,./build_android/x86_64/lib
+        -Wl,-rpath,./build_android/x86_64/lib \
+        2>&1
     
     if [ $? -eq 0 ]; then
         echo_success "测试程序编译成功"
     else
         echo_error "测试程序编译失败"
+        echo_info "可能的原因："
+        echo_info "  1. 库文件不完整或损坏"
+        echo_info "  2. 缺少依赖库"
+        echo_info "  3. 头文件不匹配"
         exit 1
     fi
 }
