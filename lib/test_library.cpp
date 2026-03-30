@@ -77,7 +77,7 @@ void test_embedding_matcher() {
     auto addTestVector = [&matcher](const std::string& word, int index) {
         std::vector<float> vec(128, 0.0f);
         vec[index % 128] = 1.0f;
-        matcher.getImpl()->embedding_model->addWordVector(word, vec);
+        matcher.addWordVector(word, vec);
     };
     
     // 添加词向量

@@ -95,9 +95,13 @@ public:
     
     bool isEnumItemEnabled(const std::string& id) const;
     
+    // 测试用：添加词向量
+    bool addWordVector(const std::string& word, const std::vector<float>& vector);
+    
     // 测试用：获取内部实现（用于添加词向量）
-    struct Impl* getImpl() { return impl_.get(); }
-    const struct Impl* getImpl() const { return impl_.get(); }
+    // 注意：此方法仅用于测试目的，实际使用中不推荐
+    void* getImpl() { return impl_.get(); }
+    const void* getImpl() const { return impl_.get(); }
 
 private:
     float cosineSimilarity(const EmbeddingVector& v1, const EmbeddingVector& v2);

@@ -554,4 +554,17 @@ bool EmbeddingMatcher::loadPrecomputedEnumVectors(const std::string& cache_path)
     return true;
 }
 
+bool EmbeddingMatcher::addWordVector(const std::string& word, const std::vector<float>& vector) {
+    if (vector.size() != EMBEDDING_DIM) {
+        return false;
+    }
+    
+    EmbeddingVector emb;
+    for (size_t i = 0; i < EMBEDDING_DIM; ++i) {
+        emb[i] = vector[i];
+    }
+    
+    return impl_->embedding_model->addWordVector(word, emb);
+}
+
 }
