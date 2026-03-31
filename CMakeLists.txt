@@ -23,6 +23,7 @@ add_library(ai_glasses SHARED ${SOURCES})
 
 target_include_directories(ai_glasses PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/cppjieba/include
     ${JNI_INCLUDE_DIRS}
 )
 

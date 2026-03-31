@@ -44,6 +44,14 @@ endif()
 
 # 包含目录
 set(CPPJIEBA_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cppjieba/include")
+message(STATUS "CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}")
+message(STATUS "CPPJIEBA_INCLUDE_DIR: ${CPPJIEBA_INCLUDE_DIR}")
+if(EXISTS "${CPPJIEBA_INCLUDE_DIR}/cppjieba/Jieba.hpp")
+    message(STATUS "✓ Found cppjieba/Jieba.hpp")
+else()
+    message(STATUS "✗ cppjieba/Jieba.hpp NOT found at expected path")
+endif()
+
 target_include_directories(ai_glasses
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
