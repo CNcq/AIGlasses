@@ -33,12 +33,12 @@ void test_json_parser() {
     std::cout << "✓ JSON Parser test passed!" << std::endl;
 }
 
-// 测试结巴分词
+// 测试结巴分词（使用 cppjieba 混合模式）
 void test_jieba_segmenter() {
-    std::cout << "Testing Jieba Segmenter..." << std::endl;
+    std::cout << "Testing Jieba Segmenter (Mix Mode)..." << std::endl;
     
     JiebaSegmenter segmenter;
-    segmenter.initialize("");  // 使用内置词典
+    segmenter.initialize("");  // 使用内置词典，自动使用混合模式
     
     std::vector<std::string> tokens = segmenter.segment("墙壁出现脱落");
     
@@ -49,6 +49,24 @@ void test_jieba_segmenter() {
     std::cout << std::endl;
     
     assert(!tokens.empty());
+    
+    // 测试铜质、铁质、铝合金质等词汇的分词
+    std::cout << "\nTest: 分词测试（铜质/铁质/铝合金质）" << std::endl;
+    std::vector<std::string> test_cases = {
+        "这个变电箱材质为铜",
+        "箱子是铁质的",
+        "外壳是铝合金质"
+    };
+    
+    for (const auto& text : test_cases) {
+        auto words = segmenter.segment(text);
+        std::cout << "Input: " << text << std::endl;
+        std::cout << "Tokens: ";
+        for (const auto& word : words) {
+            std::cout << word << " ";
+        }
+        std::cout << std::endl;
+    }
     
     std::cout << "✓ Jieba Segmenter test passed!" << std::endl;
 }

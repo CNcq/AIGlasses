@@ -5,11 +5,13 @@
 #include <sstream>
 #include <unordered_set>
 #include <unordered_map>
+#include "cppjieba/include/cppjieba/Jieba.hpp"
 
 namespace ai_glasses {
 
 struct JiebaSegmenter::Impl {
     std::string dict_path;
+    std::unique_ptr<cppjieba::Jieba> jieba;
     std::unordered_set<std::string> dict_words;
     std::unordered_map<std::string, std::vector<std::string>> trie;
     bool initialized = false;
@@ -158,6 +160,13 @@ bool JiebaSegmenter::initialize(const std::string& dict_path) {
     }
     
     impl_->initialized = true;
+    
+    if (dict_path.empty()) {
+        impl_->jieba = std::make_unique<cppjieba::Jieba>();
+    } else {
+        impl_->jieba = std::make_unique<cppjieba::Jieba>(dict_path);
+    }
+    
     return true;
 }
 
@@ -166,11 +175,13 @@ std::vector<std::string> JiebaSegmenter::segment(const std::string& text) {
         return impl_->basicTokenize(text);
     }
 
-    if (impl_->dict_words.empty()) {
-        return impl_->basicTokenize(text);
+    if (impl_->jieba) {
+        std::vector<std::string> words;
+        impl_->jieba->Cut(text, words);
+        return words;
     }
 
-    return impl_->maxMatch(text);
+    return impl_->basicTokenize(text);
 }
 
 std::string JiebaSegmenter::segmentToString(const std::string& text, const std::string& delimiter) {
