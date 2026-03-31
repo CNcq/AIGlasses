@@ -1,10 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 project(ai_glasses VERSION 1.0.0 LANGUAGES CXX)
 
-# 获取库源码目录（支持 Android 构建）
-get_filename_component(LIB_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" REALPATH)
-get_filename_component(LIB_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}" REALPATH)
-
 # C++ 标准设置
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -50,11 +46,10 @@ endif()
 target_include_directories(ai_glasses
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<BUILD_INTERFACE:${LIB_SOURCE_DIR}/cppjieba/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../cppjieba/include>
         $<INSTALL_INTERFACE:include>
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
-        ${LIB_BINARY_DIR}
 )
 
 # 编译选项
