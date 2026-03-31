@@ -5,7 +5,7 @@
 #include <sstream>
 #include <unordered_set>
 #include <unordered_map>
-#include "cppjieba/Jieba.hpp"
+#include "cppjieba/include/cppjieba/Jieba.hpp"
 
 namespace ai_glasses {
 
