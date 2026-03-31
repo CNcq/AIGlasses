@@ -122,12 +122,20 @@ MatchResult EmbeddingMatcher::findBestMatch(const std::string& input_text) {
         
         float sim = cosineSimilarity(input_embedding, enum_item.embedding);
         
-        if (sim > result.similarity) {
+        if (sim > result.similarity && sim >= enum_item.threshold) {
             result.similarity = sim;
             result.matched_id = enum_item.id;
             result.matched_text = enum_item.text;
-            result.is_match = sim >= enum_item.threshold;
+            result.rank = static_cast<int>(i + 1);
+            result.is_match = true;
         }
+    }
+    
+    if (result.similarity < 0.5f) {
+        result.matched_id.clear();
+        result.matched_text.clear();
+        result.rank = 0;
+        result.is_match = false;
     }
     
     return result;
@@ -182,16 +190,27 @@ EmbeddingVector EmbeddingMatcher::computeTextEmbedding(const std::vector<std::st
     size_t count = 0;
     for (const auto& token : tokens) {
         auto word_embedding = impl_->embedding_model->computeEmbedding(token);
+        bool has_nonzero = false;
         for (size_t i = 0; i < EMBEDDING_DIM; ++i) {
-            embedding[i] += word_embedding[i];
+            if (std::abs(word_embedding[i]) > 1e-8f) {
+                has_nonzero = true;
+                break;
+            }
         }
-        count++;
+        if (has_nonzero) {
+            for (size_t i = 0; i < EMBEDDING_DIM; ++i) {
+                embedding[i] += word_embedding[i];
+            }
+            count++;
+        }
     }
     
     if (count > 0) {
         for (size_t i = 0; i < EMBEDDING_DIM; ++i) {
             embedding[i] /= static_cast<float>(count);
         }
+    } else {
+        embedding[0] = 1.0f;
     }
     
     return embedding;

@@ -148,20 +148,26 @@ void test_dynamic_defects() {
     std::cout << "\nTest 1: 匹配铜质" << std::endl;
     MatchResult result1 = matcher.findBestMatch("这个变电箱材质为铜");
     std::cout << "Input: 这个变电箱材质为铜" << std::endl;
-    std::cout << "Matched: " << result1.matched_text << std::endl;
+    std::cout << "Matched: " << (result1.matched_text.empty() ? "(无匹配)" : result1.matched_text) << std::endl;
     std::cout << "Similarity: " << result1.similarity << std::endl;
+    std::cout << "Rank: " << result1.rank << std::endl;
+    std::cout << "Is Match: " << (result1.is_match ? "是" : "否") << std::endl;
     
     std::cout << "\nTest 2: 匹配铁质" << std::endl;
     MatchResult result2 = matcher.findBestMatch("箱子是铁质的");
     std::cout << "Input: 箱子是铁质的" << std::endl;
-    std::cout << "Matched: " << result2.matched_text << std::endl;
+    std::cout << "Matched: " << (result2.matched_text.empty() ? "(无匹配)" : result2.matched_text) << std::endl;
     std::cout << "Similarity: " << result2.similarity << std::endl;
+    std::cout << "Rank: " << result2.rank << std::endl;
+    std::cout << "Is Match: " << (result2.is_match ? "是" : "否") << std::endl;
     
     std::cout << "\nTest 3: 匹配铝合金质" << std::endl;
     MatchResult result3 = matcher.findBestMatch("外壳是铝合金质");
     std::cout << "Input: 外壳是铝合金质" << std::endl;
-    std::cout << "Matched: " << result3.matched_text << std::endl;
+    std::cout << "Matched: " << (result3.matched_text.empty() ? "(无匹配)" : result3.matched_text) << std::endl;
     std::cout << "Similarity: " << result3.similarity << std::endl;
+    std::cout << "Rank: " << result3.rank << std::endl;
+    std::cout << "Is Match: " << (result3.is_match ? "是" : "否") << std::endl;
     
     std::cout << "✓ Dynamic Defects test passed!" << std::endl;
 }
