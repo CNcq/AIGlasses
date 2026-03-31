@@ -55,7 +55,7 @@ public:
                     float threshold = 0.5f);
     
     // 动态添加缺陷（用户输入的缺陷数组）
-    void addDefectsFromList(const std::vector<std::string>& defect_list);
+    void addDefectsFromList(const std::vector<std::string>& defect_list, bool clear_existing = false);
     
     MatchResult findBestMatch(const std::string& input_text);
     

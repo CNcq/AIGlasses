@@ -87,9 +87,13 @@ void EmbeddingMatcher::addEnumItem(const std::string& id, const std::string& tex
     addEnumItem(item);
 }
 
-void EmbeddingMatcher::addDefectsFromList(const std::vector<std::string>& defect_list) {
+void EmbeddingMatcher::addDefectsFromList(const std::vector<std::string>& defect_list, bool clear_existing) {
+    if (clear_existing) {
+        impl_->enum_items.clear();
+    }
+    size_t start_index = impl_->enum_items.size();
     for (size_t i = 0; i < defect_list.size(); ++i) {
-        std::string id = "defect_" + std::to_string(i);
+        std::string id = "defect_" + std::to_string(start_index + i);
         std::string text = defect_list[i];
         std::vector<std::string> keywords = {text};
         

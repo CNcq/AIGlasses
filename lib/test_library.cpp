@@ -184,7 +184,7 @@ void test_add_enum_item_overloads() {
     matcher.addEnumItem(item1);
     
     // 测试 addEnumItem(const std::string& id, const std::string& text, const std::vector<std::string>& keywords)
-    matcher.addEnumItem("TEST_002", "测试缺陷2", {"关键词3", "关键词4"});
+    matcher.addEnumItem("TEST_002", "测试缺陷2", std::vector<std::string>{"关键词3", "关键词4"});
     
     // 测试 addEnumItem(const std::string& id, const std::string& text, const std::string& description, const std::vector<std::string>& keywords, float threshold)
     matcher.addEnumItem("TEST_003", "测试缺陷3", "这是描述", {"关键词5"}, 0.6f);
